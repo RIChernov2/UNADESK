@@ -15,13 +15,11 @@
         /// </summary>
         public TriangleError Error { get; }
 
-
         /// <summary>
         /// Конструктор класса.
         /// </summary>
         /// <param name="result">Результат выполнения операции / проверки.</param>
         /// <param name="error">Тип ошибки, если возникла. По умолчанию <see cref="TriangleError.None"/>.</param>
-
         public OperationResult(TriangleAngleType result, TriangleError error = TriangleError.None)
         {
             Result = result;

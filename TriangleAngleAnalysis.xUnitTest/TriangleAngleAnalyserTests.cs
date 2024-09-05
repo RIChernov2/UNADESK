@@ -8,12 +8,12 @@ namespace TriangleAngleAnalysis.xUnitTest
         [InlineData(3, 4, 5, TriangleAngleType.Right)]      // Right
         [InlineData(5, 12, 13, TriangleAngleType.Right)]    // Right
         [InlineData(6, 8, 10, TriangleAngleType.Right)]     // Right
-        [InlineData(2, 2, 2.5, TriangleAngleType.Acute)]  // Acute
-        [InlineData(4, 5, 6, TriangleAngleType.Acute)]    // Acute
-        [InlineData(5, 5, 7, TriangleAngleType.Acute)]    // Acute
-        [InlineData(3, 6, 7, TriangleAngleType.Obtuse)]    // Obtuse
-        [InlineData(4, 5, 8, TriangleAngleType.Obtuse)]    // Obtuse
-        [InlineData(10, 10, 15, TriangleAngleType.Obtuse)] // Obtuse
+        [InlineData(2, 2, 2.5, TriangleAngleType.Acute)]    // Acute
+        [InlineData(4, 5, 6, TriangleAngleType.Acute)]      // Acute
+        [InlineData(5, 5, 7, TriangleAngleType.Acute)]      // Acute
+        [InlineData(3, 6, 7, TriangleAngleType.Obtuse)]     // Obtuse
+        [InlineData(4, 5, 8, TriangleAngleType.Obtuse)]     // Obtuse
+        [InlineData(10, 10, 15, TriangleAngleType.Obtuse)]  // Obtuse
         public void DefineTriangleType_Test(double a, double b, double c, TriangleAngleType expected)
         {
 
@@ -54,6 +54,21 @@ namespace TriangleAngleAnalysis.xUnitTest
             // Assert
             Assert.Equal(TriangleAngleType.Undefind, result.Result);
             Assert.Equal(TriangleError.TriangleInequalityViolation, result.Error);
+        }
+
+        [Theory]
+        [InlineData(0.000003, 0.000004, 0.0000051, TriangleAngleType.Right, 1)]         // Right
+        [InlineData(0.000003, 0.000004, 0.0000051, TriangleAngleType.Obtuse, 1e-12)]    // Obtuse
+        [InlineData(0.000003, 0.000004, 0.0000045, TriangleAngleType.Right)]            // Right
+        [InlineData(0.000003, 0.000004, 0.0000045, TriangleAngleType.Acute, 1e-12)]     // Acute
+        public void DefineTriangleType_CheckTolerance_Test(double a, double b, double c, TriangleAngleType expected, double tolerance = 1e-10)
+        {
+            // Act
+            var result = TriangleAngleAnalyser.DefineTriangleType(a, b, c, tolerance);
+
+            // Assert
+            Assert.Equal(expected, result.Result);
+            Assert.Equal(TriangleError.None, result.Error);
         }
 
     }
