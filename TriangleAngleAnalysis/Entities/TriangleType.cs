@@ -1,6 +1,6 @@
 ﻿namespace TriangleAngleAnalysis.Entities
 {
-    public enum TriangleAngleType
+    public enum TriangleType
     {
         Acute,
         Right,

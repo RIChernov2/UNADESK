@@ -17,17 +17,15 @@
             var validationResult = ValidateTriangle(firstSide, secondSide, thirdSide);
             if (validationResult != TriangleError.None)
             {
-                return new OperationResult(TriangleAngleType.Undefind, validationResult);
+                return new OperationResult(TriangleType.Undefind, validationResult);
             }
 
             if(!ValidateTolerance(tolerance))
             {
-                return new OperationResult(TriangleAngleType.Undefind, TriangleError.InvalidTolerance);
+                return new OperationResult(TriangleType.Undefind, TriangleError.InvalidTolerance);
             }
 
-            TriangleAngleType result = DefineTriangleTypeAfterInputValidation(firstSide, secondSide, thirdSide, tolerance);
-
-            return new OperationResult(result, TriangleError.None);
+            return DefineTriangleTypeAfterInputValidation(firstSide, secondSide, thirdSide, tolerance);
         }
         private static TriangleError ValidateTriangle(double sideA, double sideB, double sideC)
         {
@@ -47,30 +45,41 @@
         {
             return (tolerance >= 0) && (tolerance <= 1);
         }
-        private static TriangleAngleType DefineTriangleTypeAfterInputValidation(double sideA, double sideB, double sideC, double tolerance = 1e-10)
+        private static OperationResult DefineTriangleTypeAfterInputValidation(double sideA, double sideB, double sideC, double tolerance = 1e-10)
         {
             double[] sides = new double[] { sideA, sideB, sideC };
             Array.Sort(sides);
-
+            Math.Sqrt(double.MaxValue);
             double a = sides[0];
             double b = sides[1];
             double c = sides[2];
+             
+            double max = double.MaxValue;
+            if( c > Math.Sqrt(max) || a * a / 2 + b * b / 2 > max / 2 )
+            {
+                return new OperationResult (TriangleType.Undefind, TriangleError.PotentialOverflow);
+            }
+
 
             double sumOfSquares = a * a + b * b;
             double squareOfLongestSide = c * c;
 
+            TriangleType triangleType;
+
             if (Math.Abs(sumOfSquares - squareOfLongestSide) < tolerance)
             {
-                return TriangleAngleType.Right;
+                triangleType = TriangleType.Right;
             }
             else if (sumOfSquares < squareOfLongestSide)
             {
-                return TriangleAngleType.Obtuse;
+                triangleType= TriangleType.Obtuse;
             }
             else
             {
-                return TriangleAngleType.Acute;
+                triangleType = TriangleType.Acute;
             }
+
+            return new OperationResult(triangleType, TriangleError.None);
         }
     }
 }
