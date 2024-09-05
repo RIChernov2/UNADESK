@@ -6,96 +6,61 @@
     public static class TriangleAngleAnalyser
     {
         /// <summary>
-        /// Определяет, является ли угол в треугольнике прямым по заданным сторонам.
+        /// Определяет, является треугольник остро-, прямо- или тупоугольным по заданным сторонам.
         /// </summary>
-        /// <param name="firstAngleSide">Первая сторона угла.</param>
-        /// <param name="secondAngleSide">Вторая сторона угла.</param>
-        /// <param name="oppositeSide">Сторона треугольника, противоположная углу.</param>
-        /// <returns>Результат проверки, является ли угол прямым.</returns>
-        public static OperationResult CheckIfRightAngle(double firstAngleSide, double secondAngleSide, double oppositeSide)
+        /// <param name="firstSide">Первая сторона угла.</param>
+        /// <param name="secondSide">Вторая сторона угла.</param>
+        /// <param name="thirdSide">Третья сторона угла.</param>
+        /// <returns>Информацию о типе треугольника, либо об ошибке в переданных данных.</returns>
+        public static OperationResult DefineTriangleType(double firstSide, double secondSide, double thirdSide)
         {
-            int expectedResult = 0;
-            return EvaluateAngleType(firstAngleSide, secondAngleSide, oppositeSide, expectedResult);
-        }
-
-        /// <summary>
-        /// Определяет, является ли угол в треугольнике острым по заданным сторонам.
-        /// </summary>
-        /// <param name="firstAngleSide">Первая сторона угла.</param>
-        /// <param name="secondAngleSide">Вторая сторона угла.</param>
-        /// <param name="oppositeSide">Сторона треугольника, противоположная углу.</param>
-        /// <returns>Результат проверки, является ли угол острым.</returns>
-        public static OperationResult CheckIfAcuteAngle(double firstAngleSide, double secondAngleSide, double oppositeSide)
-        {
-            int expectedResult = 1;
-            return EvaluateAngleType(firstAngleSide, secondAngleSide, oppositeSide, expectedResult);
-        }
-
-        /// <summary>
-        /// Определяет, является ли угол в треугольнике тупым по заданным сторонам.
-        /// </summary>
-        /// <param name="firstAngleSide">Первая сторона угла.</param>
-        /// <param name="secondAngleSide">Вторая сторона угла.</param>
-        /// <param name="oppositeSide">Сторона треугольника, противоположная углу.</param>
-        /// <returns>Результат проверки, является ли угол тупым.</returns>
-        public static OperationResult CheckIfObtuseAngle(double firstAngleSide, double secondAngleSide, double oppositeSide)
-        {
-            int expectedResult = -1;
-            return EvaluateAngleType(firstAngleSide, secondAngleSide, oppositeSide, expectedResult);
-        }
-
-        private static OperationResult EvaluateAngleType(double firstAngleSide, double secondAngleSide, double oppositeSide, int expectedResult)
-        {
-            var validationResult = ValidateTriangle(firstAngleSide, secondAngleSide, oppositeSide);
-            if (validationResult.Error != TriangleError.None)
+            var validationResult = ValidateTriangle(firstSide, secondSide, thirdSide);
+            if (validationResult != TriangleError.None)
             {
-                return validationResult;
+                return new OperationResult(TriangleAngleType.Undefind, validationResult);
             }
-            
-            bool result = CheckIfResultMatchesExpected(firstAngleSide, secondAngleSide, oppositeSide, expectedResult);
+
+            TriangleAngleType result = DefineTriangleTypeAfterInputValidation(firstSide, secondSide, thirdSide);
 
             return new OperationResult(result, TriangleError.None);
         }
-        private static OperationResult ValidateTriangle(double sideA, double sideB, double sideC)
+        private static TriangleError ValidateTriangle(double sideA, double sideB, double sideC)
         {
             if (sideA <= 0 || sideB <= 0 || sideC <= 0)
             {
-                return new OperationResult(false, TriangleError.SideLessOrEqualToZero);
+                return TriangleError.SideLessOrEqualToZero;
             }
 
             if (sideA + sideB > sideC && sideA + sideC > sideB && sideB + sideC > sideA)
             {
-                return new OperationResult(true, TriangleError.None);
+                return TriangleError.None;
             }
 
-            return new OperationResult(false, TriangleError.TriangleInequalityViolation);
+            return TriangleError.TriangleInequalityViolation;
         }
-        private static bool CheckIfResultMatchesExpected(double firstAngleSide, double secondAngleSide, double oppositeSide, int expectedResult)
+        private static TriangleAngleType DefineTriangleTypeAfterInputValidation(double sideA, double sideB, double sideC)
         {
-            int comparisonResult = CompareSumOfSquares(firstAngleSide, secondAngleSide, oppositeSide);
-            return comparisonResult == expectedResult;
+            double[] sides = new double[] { sideA, sideB, sideC };
+            Array.Sort(sides);
 
-        }
-        private static int CompareSumOfSquares(double firstAngleSide, double secondAngleSide, double oppositeSide)
-        {
-            double a = firstAngleSide;
-            double b = secondAngleSide;
-            double c = oppositeSide;
+            double a = sides[0];
+            double b = sides[1];
+            double c = sides[2];
 
-            double sumOfSquaresOfSides = a * a + b * b;
-            double squareOfOppositeSide = c * c;
+            double sumOfSquares = a * a + b * b;
+            double squareOfLongestSide = c * c;
 
-            if (Math.Abs(sumOfSquaresOfSides - squareOfOppositeSide) < 1e-10)
+            if (Math.Abs(sumOfSquares - squareOfLongestSide) < 1e-10)
             {
-                return 0;
+                return TriangleAngleType.Right;
             }
-            else if (sumOfSquaresOfSides < squareOfOppositeSide)
+            else if (sumOfSquares < squareOfLongestSide)
             {
-                return -1;
+                return TriangleAngleType.Obtuse;
             }
             else
             {
-                return 1;
+                return TriangleAngleType.Acute;
             }
         }
     }
