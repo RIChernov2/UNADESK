@@ -5,6 +5,8 @@
 
     public static class TriangleAngleAnalyser
     {
+        private static readonly double _sqrRootOFMax = Math.Sqrt(double.MaxValue);
+
         /// <summary>
         /// Определяет, является треугольник остро-, прямо- или тупоугольным по заданным сторонам.
         /// </summary>
@@ -49,13 +51,11 @@
         {
             double[] sides = new double[] { sideA, sideB, sideC };
             Array.Sort(sides);
-            Math.Sqrt(double.MaxValue);
             double a = sides[0];
             double b = sides[1];
             double c = sides[2];
              
-            double max = double.MaxValue;
-            if( c > Math.Sqrt(max) || a * a / 2 + b * b / 2 > max / 2 )
+            if( c > _sqrRootOFMax || a * a / 2 + b * b / 2 > double.MaxValue / 2 )
             {
                 return new OperationResult (TriangleType.Undefind, TriangleError.PotentialOverflow);
             }
