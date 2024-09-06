@@ -22,7 +22,7 @@
                 return new OperationResult(TriangleType.Undefind, validationResult);
             }
 
-            if(!ValidateTolerance(tolerance))
+            if (!ValidateTolerance(tolerance))
             {
                 return new OperationResult(TriangleType.Undefind, TriangleError.InvalidTolerance);
             }
@@ -34,6 +34,17 @@
             if (sideA <= 0 || sideB <= 0 || sideC <= 0)
             {
                 return TriangleError.SideLessOrEqualToZero;
+            }
+
+            double halfMax = double.MaxValue / 2;
+
+            // This condition checks to prevent potential stack overflow when using the Pythagorean theorem further.
+            if (sideA > _sqrRootOFMax || sideB > _sqrRootOFMax || sideC > _sqrRootOFMax ||
+                sideA * sideA / 2 + sideB * sideB / 2 > halfMax ||
+                sideA * sideA / 2 + sideC * sideC / 2 > halfMax ||
+                sideB * sideB / 2 + sideC * sideC / 2 > halfMax)
+            {
+                return TriangleError.PotentialOverflow;
             }
 
             if (sideA + sideB > sideC && sideA + sideC > sideB && sideB + sideC > sideA)
@@ -54,12 +65,6 @@
             double a = sides[0];
             double b = sides[1];
             double c = sides[2];
-             
-            if( c > _sqrRootOFMax || a * a / 2 + b * b / 2 > double.MaxValue / 2 )
-            {
-                return new OperationResult (TriangleType.Undefind, TriangleError.PotentialOverflow);
-            }
-
 
             double sumOfSquares = a * a + b * b;
             double squareOfLongestSide = c * c;
@@ -72,7 +77,7 @@
             }
             else if (sumOfSquares < squareOfLongestSide)
             {
-                triangleType= TriangleType.Obtuse;
+                triangleType = TriangleType.Obtuse;
             }
             else
             {
