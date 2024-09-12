@@ -38,7 +38,7 @@
 
             double halfMax = double.MaxValue / 2;
 
-            // This condition checks to prevent potential stack overflow when using the Pythagorean theorem further.
+            // This condition checks to prevent potential overflow when using the Pythagorean theorem further.
             if (sideA > _sqrRootOFMax || sideB > _sqrRootOFMax || sideC > _sqrRootOFMax ||
                 sideA * sideA / 2 + sideB * sideB / 2 > halfMax ||
                 sideA * sideA / 2 + sideC * sideC / 2 > halfMax ||
